@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="thirdparty/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="thirdparty/jquery-3.1.0.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="thirdparty/js/bootstrap.min.js"></script>
+<title>Virtual Shopping</title>
+</head>
+<body style="width: 30%; margin-left: 30%; margin-top: 5%;"
+	onload="loadData();">
+	<div class="panel panel-danger">
+		<div class="panel-heading">
+			<h3 class="panel-title">Virtual Shopping</h3>
+		</div>
+		<div class="panel-body">
+			<div class="list-group">
+				<a href="vendor_category.html" class="list-group-item">Create
+					Vendor And Product Category</a> <a href="product.html"
+					class="list-group-item">Create Product</a> <a
+					href="search_shop.html" class="list-group-item">Search And Shop</a>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+<script>
+	var serverUrl = 'http://localhost:7001/product-service/v1/';
+
+	function loadData() {
+		loadVendor();
+		loadCategory();
+	}
+
+	function loadVendor() {
+
+		$.ajax({
+			url : serverUrl + '/vendorList',
+			context : document.body,
+			method : 'GET',
+		}).done(
+				function(data) {
+
+					$.each(data, function(index, item) {
+						$('#vendorName').append(
+								$('<option></option>').val(item.id).html(
+										item.name));
+					});
+				});
+	}
+
+	function loadCategory() {
+
+		$.ajax({
+			url : serverUrl + '/productCategory',
+			context : document.body,
+			method : 'GET',
+		}).done(
+				function(data) {
+
+					$.each(data, function(index, item) {
+						$('#productCategory').append(
+								$('<option></option>').val(item.categoryId)
+										.html(item.categoryName));
+					});
+				});
+	}
+
+	function createProduct() {
+
+		var product = new Product();
+
+		product.categoryId = $("#productCategory").val();
+		product.description = $("#description").val();
+		product.displayName = $("#displayName").val();
+		product.price = $("#price").val();
+		product.productId = null
+		product.stock = $("#stock").val();
+		product.vendorId = $("#vendorName").val();
+
+		$.ajax({
+			url : serverUrl + '/createProduct',
+			contentType : "application/json; charset=utf-8",
+			method : 'POST',
+			data : JSON.stringify(product),
+			dataType : 'json'
+		}).done(function(response) {
+			alert('Product Id:' + response);
+		});
+
+	}
+
+	function Product() {
+
+		var categoryId;
+		var description;
+		var displayName;
+		var price;
+		var productId;
+		var stock;
+		var vendorId;
+	}
+</script>
